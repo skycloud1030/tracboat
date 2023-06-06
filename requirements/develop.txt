@@ -24,6 +24,7 @@ docutils==0.13.1
     # via -r requirements/src/develop.in
 enum34==1.1.6
     # via flake8
+ftfy==4.4.3
 first==2.0.1
     # via pip-tools
 flake8==3.3.0

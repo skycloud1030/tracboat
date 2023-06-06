@@ -5,6 +5,7 @@
 #    pip-compile --output-file dist.txt src/dist.in
 #
 click==6.7
+ftfy==4.4.3
 peewee==2.9.2
 psycopg2==2.7.6.1
 pymongo==3.4.0

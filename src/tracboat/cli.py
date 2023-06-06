@@ -16,6 +16,9 @@ from collections import defaultdict
 from os import path, makedirs
 from pprint import pformat
 
+from ftfy import fix_encoding
+import collections
+
 import click
 import peewee
 import toml
@@ -37,11 +40,26 @@ CONTEXT_SETTINGS = {
 # utils
 ################################################################################
 
+# Fix json output utf8
+# https://github.com/tracboat/tracboat/issues/6#issuecomment-394353933
+def convert(data):
+    # Using Python2 str/unicode difference (WILL NOT WORK with Python3! str is always unicode and basestring disappeared)
+    if isinstance(data, str):
+        return data.decode('utf-8', 'replace')
+    elif isinstance(data, unicode):
+        return fix_encoding(data)
+    elif isinstance(data, collections.Mapping):
+        return dict(map(convert, data.iteritems()))
+    elif isinstance(data, collections.Iterable):
+        return type(data)(map(convert, data))
+    else:
+        return data
+
 def _dumps(obj, fmt=None):
     if fmt == 'toml':
         return toml.dumps(obj)
     elif fmt == 'json':
-        return json.dumps(obj, sort_keys=True, indent=2, default=json_util.default)
+        return json.dumps(convert(obj), sort_keys=True, indent=2, default=json_util.default)
     elif fmt == 'python':
         return pformat(obj, indent=2)
     elif fmt == 'pickle':
